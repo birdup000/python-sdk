@@ -153,14 +153,88 @@ class AGiXTSDK:
             parse_response(response)
         return response.json()
 
-    def get_providers(self) -> List[str]:
+    def add_prompt(
+        self, prompt_name: str, prompt: str, prompt_category: str = "Default"
+    ) -> str:
         try:
-            response = requests.get(
-                headers=self.headers, url=f"{self.base_uri}/api/provider"
+            response = requests.post(
+                headers=self.headers,
+                url=f"{self.base_uri}/api/prompt/{prompt_category}",
+                json={
+                    "prompt_name": prompt_name,
+                    "prompt": prompt,
+                },
             )
             if self.verbose:
                 parse_response(response)
-            return response.json()["providers"]
+            return response.json()["message"]
+        except Exception as e:
+            return self.handle_error(e)
+
+    def delete_prompt(
+        self, prompt_name: str, prompt_category: str = "Default"
+    ) -> str:
+        try:
+            response = requests.delete(
+                headers=self.headers,
+                url=f"{self.base_uri}/api/prompt/{prompt_category}/{prompt_name}",
+            )
+            if self.verbose:
+                parse_response(response)
+            return response.json()["message"]
+        except Exception as e:
+            return self.handle_error(e)
+
+    def rename_prompt(
+        self, prompt_name: str, new_name: str, prompt_category: str = "Default"
+    ) -> str:
+        try:
+            response = requests.patch(
+                headers=self.headers,
+                url=f"{self.base_uri}/api/prompt/{prompt_category}/{prompt_name}",
+                json={"prompt_name": new_name},
+            )
+            if self.verbose:
+                parse_response(response)
+            return response.json()["message"]
+        except Exception as e:
+            return self.handle_error(e)
+
+    def get_prompt(
+        self, prompt_name: str, prompt_category: str = "Default"
+    ) -> Dict[str, Any]:
+        try:
+            response = requests.get(
+                headers=self.headers,
+                url=f"{self.base_uri}/api/prompt/{prompt_category}/{prompt_name}",
+            )
+            if self.verbose:
+                parse_response(response)
+            return response.json()
+        except Exception as e:
+            return self.handle_error(e)
+
+    def get_prompts(self, prompt_category: str = "Default") -> Dict[str, Any]:
+        try:
+            response = requests.get(
+                headers=self.headers,
+                url=f"{self.base_uri}/api/prompt/{prompt_category}",
+            )
+            if self.verbose:
+                parse_response(response)
+            return response.json()
+        except Exception as e:
+            return self.handle_error(e)
+
+    def get_prompt_categories(self) -> Dict[str, Any]:
+        try:
+            response = requests.get(
+                headers=self.headers,
+                url=f"{self.base_uri}/api/prompt/categories",
+            )
+            if self.verbose:
+                parse_response(response)
+            return response.json()
         except Exception as e:
             return self.handle_error(e)
 
@@ -868,17 +942,14 @@ class AGiXTSDK:
         except Exception as e:
             return self.handle_error(e)
 
-    def add_prompt(
-        self, prompt_name: str, prompt: str, prompt_category: str = "Default"
+    def rename_prompt(
+        self, prompt_name: str, new_name: str, prompt_category: str = "Default"
     ) -> str:
         try:
-            response = requests.post(
+            response = requests.patch(
                 headers=self.headers,
-                url=f"{self.base_uri}/api/prompt/{prompt_category}",
-                json={
-                    "prompt_name": prompt_name,
-                    "prompt": prompt,
-                },
+                url=f"{self.base_uri}/api/prompt/{prompt_category}/{prompt_name}",
+                json={"prompt_name": new_name},
             )
             if self.verbose:
                 parse_response(response)
