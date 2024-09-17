@@ -84,6 +84,17 @@ class AGiXTSDK:
         print(f"Error: {error}")
         raise Exception(f"Unable to retrieve data. {error}")
 
+    def delete_prompt_category(self, prompt_category: str):
+        response = requests.delete(
+            f"{self.base_uri}/v1/prompt-categories/{prompt_category}",
+            headers=self.headers,
+        )
+        if self.verbose:
+            parse_response(response)
+        if response.status_code != 200:
+            self.handle_error(response.text)
+        return response.json()
+
     def login(self, email, otp):
         response = requests.post(
             f"{self.base_uri}/v1/login",
